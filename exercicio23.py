@@ -1,6 +1,5 @@
 import pygame
 import random
-import time
 
 AZUL = (246, 244, 243)
 VERMELHO = (236, 11, 67)
@@ -40,23 +39,35 @@ class Square():
         self.match = False
         self.trigger = False
 
+def pontuacao(match, pontos):
+    if match:
+        pontos += 10
+    elif match and pontos > 0:
+        pontos -= 1
+    return pontos
+
+
 def fim_jogo(grid):
     for x in grid:
         if x.match == False:
             return False
     return True
 
-def tabela_pontos(tela):
-    texto = "Pontuação total: "
+def tabela_pontos(tela, pontos):
+    texto = "Pontuação total: {}".format(pontos)
     mostra_texto(tela, texto, ALTURA_TELA//2)
 
-def comparar_selection(grid, x, y):
+def comparar_selection(grid, x, y, pontos):
     if grid[x].cor == grid[y].cor:
+        p = pontuacao(True, pontos)
         grid[x].trigger = False
         grid[y].trgger = False
 
         grid[x].match = True
         grid[y].match = True
+    else:
+        p = pontuacao(False, pontos)
+    return p
 
 def esconder_imagem(tela, grid):
     for x in grid:
@@ -152,6 +163,7 @@ def iniciar_app():
     desenhar_grid(TELA)
     click = 0
     pos = 0
+    pontos = 0
     novo_jogo = False
     esconde_tudo = False
 
@@ -172,13 +184,12 @@ def iniciar_app():
 
 
 
-        if click == 1:
+        if click == 1 and not fim:
              first_selection = revelar_imagem(TELA, pos, grid)
-        elif click == 2:
+        elif click == 2 and not fim:
             second_selection = revelar_imagem(TELA, pos, grid)
-            comparar_selection(grid, first_selection, second_selection)
-            print(first_selection)
-            print(second_selection)
+            pontos = comparar_selection(grid, first_selection, second_selection, pontos)
+
 
         else:
             esconder_imagem(TELA, grid)
@@ -188,7 +199,7 @@ def iniciar_app():
         fim = fim_jogo(grid)
         if fim:
             TELA.fill(BRANCO)
-            tabela_pontos(TELA)
+            tabela_pontos(TELA, pontos)
 
         if novo_jogo:
             desenhar_grid(TELA)
@@ -199,6 +210,7 @@ def iniciar_app():
             second_selection = 0
             grid = posicao_grid()
             esconde_tudo = False
+            pontos = 0
 
         # cuida da questão de exibir as imagens e esconde-las
         if contador == 60:
