@@ -11,6 +11,8 @@
  * python 3.7
  * biblioteca Pygame
 
+### Imagens
+
  ![tela inicial do jogo](recursos/exercicio23.png)
 
  ![tela de exibição dos match](recursos/exercicio24.png) 
